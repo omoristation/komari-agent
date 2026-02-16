@@ -94,12 +94,12 @@
                 height: 100%;
                 position: relative;
             }
-            .netSentSpeedPercent {
+            .netUpSpeedPercent {
                 background-color: #4cd964;
                 height: 100%;
                 position: relative;
             }
-            .netRecvSpeedPercent {
+            .netDownSpeedPercent {
                 background-color: #00BBFF;
                 height: 100%;
                 position: relative;
@@ -130,11 +130,11 @@
                         <td>负载:<span class="loadAvg"></span>
                             <div class="progress_middle"><div class="progress-bar cpuPercent"></div></div>
                         </td>
-                        <td>上传:<span class="netSent"></span> <span class="netSentSpeed"></span>
-                            <div class="progress_middle"><div class="progress-bar netSentSpeedPercent"></div></div>
+                        <td>上传:<span class="netUp"></span> <span class="netUpSpeed"></span>
+                            <div class="progress_middle"><div class="progress-bar netUpSpeedPercent"></div></div>
                         </td>
-                        <td>下载:<span class="netRecv"></span> <span class="netRecvSpeed"></span>
-                            <div class="progress_middle"><div class="progress-bar netRecvSpeedPercent"></div></div>
+                        <td>下载:<span class="netDown"></span> <span class="netDownSpeed"></span>
+                            <div class="progress_middle"><div class="progress-bar netDownSpeedPercent"></div></div>
                         </td>
                     </tr>
                 </tbody>
@@ -210,12 +210,12 @@
                     document.querySelector('.loadAvg').innerHTML = `${(dataJSON.load1 ?? 0).toFixed(1)}/${(dataJSON.load5 ?? 0).toFixed(1)}/${(dataJSON.load15 ?? 0).toFixed(1)} ${dataJSON.process_count}`;
                     document.querySelector('.cpuPercent').style.width = dataJSON.cpu + '%';
                     document.querySelector('.processCount').innerHTML = dataJSON.process_count;
-                    document.querySelector('.netSent').innerHTML = renderSize(dataJSON.net_down_total);
-                    document.querySelector('.netRecv').innerHTML = renderSize(dataJSON.net_up_total);
-                    document.querySelector('.netSentSpeed').innerHTML = formatsize(dataJSON.net_down_speed*8);
-                    document.querySelector('.netRecvSpeed').innerHTML = formatsize(dataJSON.net_up_speed*8);
-                    document.querySelector('.netSentSpeedPercent').style.width = dataJSON.net_down_speed/calculateMaxRange(dataJSON.net_down_speed)*100 + '%';
-                    document.querySelector('.netRecvSpeedPercent').style.width = dataJSON.net_up_speed/calculateMaxRange(dataJSON.net_up_speed)*100 + '%';
+                    document.querySelector('.netUp').innerHTML = renderSize(dataJSON.net_up_total);
+                    document.querySelector('.netDown').innerHTML = renderSize(dataJSON.net_down_total);
+                    document.querySelector('.netUpSpeed').innerHTML = formatsize(dataJSON.net_up_speed*8);
+                    document.querySelector('.netDownSpeed').innerHTML = formatsize(dataJSON.net_down_speed*8);
+                    document.querySelector('.netUpSpeedPercent').style.width = dataJSON.net_up_speed/calculateMaxRange(dataJSON.net_up_speed)*100 + '%';
+                    document.querySelector('.netDownSpeedPercent').style.width = dataJSON.net_down_speed/calculateMaxRange(dataJSON.net_down_speed)*100 + '%';
                     document.querySelector('.hostos').innerHTML = dataJSON.os +' '+ dataJSON.kernel;
                     document.querySelector('.hostos').setAttribute('title', `${dataJSON.os} ${dataJSON.kernel}`);
                     document.querySelector('.hosttime').innerHTML = secondsFormat(dataJSON.uptime);
