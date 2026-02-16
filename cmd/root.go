@@ -19,6 +19,8 @@ import (
 	"github.com/komari-monitor/komari-agent/server"
 	"github.com/komari-monitor/komari-agent/update"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3" //diy
+	"path/filepath" //diy
 
 	pkg_flags "github.com/komari-monitor/komari-agent/cmd/flags"
 )
@@ -34,9 +36,21 @@ var RootCmd = &cobra.Command{
 		if flags.ConfigFile != "" {
 			bytes, err := os.ReadFile(flags.ConfigFile)
 			if err != nil {
-				log.Fatalf("Failed to read config file: %v", err)
+				//log.Fatalf("Failed to read config file: %v", err) //diy 由于默认配置的设置，如果没有此文件也需要继续运行
+				log.Printf("Failed to read config file: %v", err)
 			}
-			err = json.Unmarshal(bytes, flags)
+
+			ext := strings.ToLower(filepath.Ext(flags.ConfigFile)) //diy 支持 yml 配置
+
+			switch ext {
+			case ".yaml", ".yml":
+				err = yaml.Unmarshal(bytes, flags)
+			case ".json":
+				err = json.Unmarshal(bytes, flags)
+			default:
+				log.Fatalf("Unsupported config file format: %s", ext)
+			}
+
 			if err != nil {
 				log.Fatalf("Failed to parse config file: %v", err)
 			}
@@ -120,6 +134,13 @@ var RootCmd = &cobra.Command{
 			}
 			go update.DoUpdateWorks()
 		}
+		//diy web测速
+		if flags.ProbePort > 0 {
+			go server.StartProbeServer(server.ProbeConfig{
+				Port: flags.ProbePort,
+				Path: flags.ProbePath,
+			})
+		}
 		go server.DoUploadBasicInfoWorks()
 		for {
 			server.UpdateBasicInfo()
@@ -176,8 +197,10 @@ func init() {
 	RootCmd.PersistentFlags().StringVar(&flags.CustomIpv4, "custom-ipv4", "", "Custom IPv4 address to use")
 	RootCmd.PersistentFlags().StringVar(&flags.CustomIpv6, "custom-ipv6", "", "Custom IPv6 address to use")
 	RootCmd.PersistentFlags().BoolVar(&flags.GetIpAddrFromNic, "get-ip-addr-from-nic", false, "Get IP address from network interface")
-	RootCmd.PersistentFlags().StringVar(&flags.ConfigFile, "config", "", "Path to the configuration file")
+	RootCmd.PersistentFlags().StringVar(&flags.ConfigFile, "config", "config.yml", "Path to the configuration file") //diy 默认配置
 	RootCmd.PersistentFlags().ParseErrorsWhitelist.UnknownFlags = true
+	RootCmd.PersistentFlags().IntVar(&flags.ProbePort, "probe-port", 0, "Probe test port") //diy
+	RootCmd.PersistentFlags().StringVar(&flags.ProbePath, "probe-path", "/probetest", "Probe path prefix") //diy
 }
 
 func loadFromEnv() {

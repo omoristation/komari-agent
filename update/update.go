@@ -15,7 +15,8 @@ import (
 
 var (
 	CurrentVersion string = "0.0.1"
-	Repo           string = "komari-monitor/komari-agent"
+	//Repo           string = "komari-monitor/komari-agent" //diy
+	Repo           string = "omoristation/komari-agent"
 )
 
 // parseVersion 解析可能带有 v/V 前缀，以及预发布或构建元数据的版本字符串
