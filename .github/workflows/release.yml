@@ -1,14 +1,15 @@
 name: Release Binaries
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*'
 
 permissions:
   contents: write 
 
 jobs:
-  build-and-attach:
+  build-and-release:
     runs-on: ubuntu-latest
 
     strategy:
